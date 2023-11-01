@@ -33,6 +33,7 @@ function onRequest(req, res) {
 
   if (url === '/') {
     let html = readFileSync(path.join(__dirname, url + 'index.html'));
+    // 把服务端变量传给客户端
     html = html.toString().replace('TO_BE_DECIDED', env.NODE_ENV);
 
     res.writeHead(200, { 'Content-Type': 'text/html' });
