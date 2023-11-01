@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>cdztt</title>
+</head>
+
+<body>
+  <div id="app"></div>
+  <script type="importmap">
+    {
+      "imports":{
+        "vue": "https://unpkg.com/vue@3/dist/vue.esm-browser.js"
+      }
+    }
+  </script>
+  <script type="module">
+    import { createApp } from 'vue'
+    import App from './App.js'
+
+    const app = createApp(App)
+    app.mount('#app')
+  </script>
+  <script>
+    window.env = 'TO_BE_DECIDED'
+  </script>
+</body>
+
+<style>
+  #app {
+    width: 40vw;
+    margin: 0 auto;
+  }
+
+  .headline {
+    height: 10vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+  }
+
+  .headline>div:nth-child(1) {
+    text-align: center;
+  }
+
+  .headline>div:nth-child(2) {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .dialog {
+    height: 65vh;
+    padding: 0 5px;
+    margin: 5px 0;
+    border: 1px dotted gray;
+    border-radius: 5px;
+    overflow-y: scroll;
+    word-wrap: break-word;
+  }
+
+  .composition {
+    height: 15vh;
+    /* margin-top: 5px; */
+    display: flex;
+  }
+
+  textarea {
+    resize: none;
+    flex: 1;
+  }
+</style>
+
+</html>

@@ -1,0 +1,12 @@
+{
+  "scripts": {
+    "dev": "cross-env NODE_ENV=dev nodemon -w ../WS -e js,html ./index.js",
+    "start": "cross-env NODE_ENV=prod nodemon -w ../WS -e js,html ./index.js"
+  },
+  "dependencies": {
+    "ws": "^8.14.2"
+  },
+  "devDependencies": {
+    "cross-env": "^7.0.3"
+  }
+}
