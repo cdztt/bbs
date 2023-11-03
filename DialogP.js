@@ -8,7 +8,7 @@ export default {
       msg: { fromWho, text, createdAt },
     } = props;
 
-    const name = fromWho === 'me' ? '' : `${fromWho}:`;
+    const name = fromWho === 'me' ? '' : ` ${fromWho} :`;
 
     const time = new Date(createdAt);
     const displayedTime = `( ${time.toLocaleTimeString()} ${time.toLocaleDateString()} )`;

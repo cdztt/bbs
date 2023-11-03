@@ -1,18 +1,18 @@
-import { defineCustomElement, ref } from 'vue';
+import { defineCustomElement, onMounted, ref } from 'vue';
 import DialogP from './DialogP.js';
 
 customElements.define('dialog-p', defineCustomElement(DialogP));
+
 const HOST =
   window.env === 'dev' ? 'wss://localhost:2222' : 'wss://hueyond.run';
 
 export default {
   setup() {
-    const UNLINKED_NAME = '未登录';
-
     const text = ref('');
     const ws = ref(null);
-    const myName = ref(UNLINKED_NAME);
     const paragraphs = ref([]);
+
+    const myName = window.nickName !== 'visitor' ? window.nickName : '未登录';
 
     function login() {
       if (ws.value === null) {
@@ -23,48 +23,54 @@ export default {
         };
 
         ws.value.onmessage = (event) => {
-          const { userName, init, text, createdAt } = JSON.parse(event.data);
-
-          if (init === true) {
-            myName.value = userName;
-          } else {
-            paragraphs.value.push({
-              fromWho: userName === myName.value ? 'me' : userName,
-              text,
-              createdAt,
-            });
-          }
+          const { nickName, userName, text, createdAt } = JSON.parse(
+            event.data
+          );
+          paragraphs.value.push({
+            fromWho: userName === window.userName ? 'me' : nickName,
+            text,
+            createdAt,
+          });
         };
       }
     }
+
+    onMounted(() => {
+      if (window.userName !== '') {
+        login();
+      }
+    });
 
     function send() {
       if (ws.value !== null) {
         const msg = {
+          nickName: window.nickName,
+          userName: window.userName,
           text: text.value,
           createdAt: Date.now(),
         };
-        ws.value.send(JSON.stringify(msg));
 
+        ws.value.send(JSON.stringify(msg));
         text.value = '';
       }
     }
 
-    function logout() {
+    async function logout() {
       if (ws.value !== null) {
         ws.value.close();
         ws.value = null;
 
-        myName.value = UNLINKED_NAME;
+        await fetch('/api/logout', {
+          method: 'GET',
+        });
+        window.location.reload();
       }
     }
 
     return {
-      text,
-      ws,
       myName,
+      text,
       paragraphs,
-      login,
       send,
       logout,
     };
@@ -76,7 +82,9 @@ export default {
       <div>
         <span>你的名字: {{myName}}</span>
         <div>
-          <button @click='login'>登录</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <button>
+            <a href='/login'>登录</a>
+          </button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
           <button @click='logout'>退出</button>
         </div>
       </div>
@@ -91,6 +99,7 @@ export default {
     <div class='composition'>
       <textarea type='text'
         v-model='text'
+        placeholder='按 Ctrl + Enter 发送'
         @keyup.ctrl.enter.exact='send'
       ></textarea>
       <button @click='send'>发送</button>

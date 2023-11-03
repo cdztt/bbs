@@ -1,12 +1,16 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
-  <title>cdztt</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" href="data:," />
+  <title>cdztt - Home</title>
 </head>
 
 <body>
-  <div id="app"></div>
+  <div id="home"></div>
+
   <script type="importmap">
     {
       "imports":{
@@ -14,20 +18,19 @@
       }
     }
   </script>
+
   <script type="module">
     import { createApp } from 'vue'
-    import App from './App.js'
+    import Home from './Home.js'
 
-    const app = createApp(App)
-    app.mount('#app')
-  </script>
-  <script>
-    window.env = 'TO_BE_DECIDED'
+    const home = createApp(Home)
+    home.config.globalProperties.window = window
+    home.mount('#home')
   </script>
 </body>
 
 <style>
-  #app {
+  #home {
     width: 40vw;
     margin: 0 auto;
   }
@@ -52,15 +55,14 @@
     height: 65vh;
     padding: 0 5px;
     margin: 5px 0;
-    border: 1px dotted gray;
-    border-radius: 5px;
+    border: 1px solid gray;
+    border-radius: 3px;
     overflow-y: scroll;
     word-wrap: break-word;
   }
 
   .composition {
     height: 15vh;
-    /* margin-top: 5px; */
     display: flex;
   }
 
