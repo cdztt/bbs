@@ -1,4 +1,4 @@
-import { defineCustomElement, onMounted, ref } from 'vue';
+import { defineCustomElement, nextTick, onMounted, ref, watch } from 'vue';
 import DialogP from './DialogP.js';
 
 customElements.define('dialog-p', defineCustomElement(DialogP));
@@ -6,13 +6,20 @@ customElements.define('dialog-p', defineCustomElement(DialogP));
 const HOST =
   window.env === 'dev' ? 'wss://localhost:2222' : 'wss://hueyond.run';
 
+const pars = window.sessionStorage.getItem('paragraphs');
+if (pars === null) {
+  window.sessionStorage.setItem('paragraphs', JSON.stringify([]));
+}
+
 export default {
   setup() {
     const text = ref('');
     const ws = ref(null);
-    const paragraphs = ref([]);
+    const paragraphs = ref(JSON.parse(pars));
+    const dialogRef = ref(null);
 
     const myName = window.nickName !== 'visitor' ? window.nickName : '未登录';
+    const hasLogin = window.userName !== '';
 
     function login() {
       if (ws.value === null) {
@@ -26,11 +33,17 @@ export default {
           const { nickName, userName, text, createdAt } = JSON.parse(
             event.data
           );
+
           paragraphs.value.push({
             fromWho: userName === window.userName ? 'me' : nickName,
             text,
             createdAt,
           });
+
+          window.sessionStorage.setItem(
+            'paragraphs',
+            JSON.stringify(paragraphs.value)
+          );
         };
       }
     }
@@ -40,6 +53,16 @@ export default {
         login();
       }
     });
+
+    watch(
+      () => paragraphs.value?.length,
+      async () => {
+        if (dialogRef.value) {
+          await nextTick();
+          dialogRef.value.scrollTop = dialogRef.value.scrollHeight;
+        }
+      }
+    );
 
     function send() {
       if (ws.value !== null) {
@@ -60,19 +83,19 @@ export default {
         ws.value.close();
         ws.value = null;
 
-        await fetch('/api/logout', {
-          method: 'GET',
-        });
+        await fetch('/api/logout');
         window.location.reload();
       }
     }
 
     return {
       myName,
+      hasLogin,
       text,
       paragraphs,
       send,
       logout,
+      dialogRef,
     };
   },
 
@@ -82,15 +105,23 @@ export default {
       <div>
         <span>你的名字: {{myName}}</span>
         <div>
-          <button>
-            <a href='/login'>登录</a>
+          <button :disabled='hasLogin'
+            @click='window.location.assign("/login")'
+          >
+            登录
           </button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-          <button @click='logout'>退出</button>
+          <button :disabled='!hasLogin'
+            @click='logout'
+          >
+            退出
+          </button>
         </div>
       </div>
     </div>
 
-    <div class='dialog'>
+    <div class='dialog'
+      ref='dialogRef'
+    >
       <dialog-p v-for='par of paragraphs'
         :key='par.createdAt'
         :msg='par' />

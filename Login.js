@@ -30,7 +30,6 @@ export default {
       placeholder='请输入昵称,不超过12个字符'
       maxlength=12
     />
-    <br />
     <button @click='login'>确定</button>
   </div>
   `,
