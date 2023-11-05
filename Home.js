@@ -15,7 +15,7 @@ export default {
   setup() {
     const text = ref('');
     const ws = ref(null);
-    const paragraphs = ref(JSON.parse(pars));
+    const paragraphs = ref([]);
     const dialogRef = ref(null);
 
     const myName = window.nickName !== 'visitor' ? window.nickName : '未登录';
@@ -49,6 +49,9 @@ export default {
     }
 
     onMounted(() => {
+      if (pars !== null) {
+        paragraphs.value = JSON.parse(pars);
+      }
       if (window.userName !== '') {
         login();
       }
