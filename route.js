@@ -6,7 +6,12 @@ const { register } = require('./store.js');
 
 /* 渲染html */
 function render(url, res, payload) {
-  let html = readFileSync(path.join(__dirname, url + '.html'));
+  let html = readFileSync(path.join(__dirname, url + '.html')).toString();
+
+  if (env.NODE_ENV === 'prod') {
+    html = html.replace('vue.esm-browser.js', 'vue.esm-browser.prod.js');
+  }
+
   // 把服务端变量传给客户端
   if (payload) {
     const injectedScript = `
@@ -16,7 +21,7 @@ function render(url, res, payload) {
         window.userName='${payload['window.userName']}'
       </script>
     `;
-    html = html.toString().replace('</body>', `${injectedScript}</body>`);
+    html = html.replace('</body>', `${injectedScript}</body>`);
   }
 
   res.writeHead(200, {
