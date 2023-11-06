@@ -36,12 +36,11 @@ function onRequest(req, res) {
     url,
     headers: { cookie },
   } = req;
-  const fakeCookieForInitialLoading = { nickName: 'visitor', userName: '' };
-  cookie =
-    cookie !== undefined ? parseCookie(cookie) : fakeCookieForInitialLoading;
+  const fakeCookieForInit = { nickName: 'visitor', userName: '' };
+  cookie = cookie !== undefined ? parseCookie(cookie) : fakeCookieForInit;
 
   if (/.js$/.test(url)) {
-    // 浏览器自动请求js文件
+    // 浏览器自动请求js文件的时候
     const js = readFileSync(path.join(__dirname, url));
     res.writeHead(200, { 'Content-Type': 'text/javascript; charset=utf-8' });
     res.end(js);
@@ -50,8 +49,7 @@ function onRequest(req, res) {
       render(url, res);
     } else {
       // 登录之后绝不能再进入login页面，手动在地址栏写入网址也不行
-      // 如果登录之后再点登录，就有太多要处理的细节
-      res.writeHead(301, { Location: '/' });
+      res.writeHead(307, { Location: '/' });
       res.end();
     }
   } else if (['/'].includes(url)) {
@@ -96,8 +94,8 @@ function onRequest(req, res) {
   } else if (['/api/logout'].includes(url)) {
     // 主页的"退出"按钮调用此
     res.setHeader('Set-Cookie', [
-      `nickName=${fakeCookieForInitialLoading.nickName}; HttpOnly; Path=/; SameSite=Strict; Secure`,
-      `userName=${fakeCookieForInitialLoading.userName}; HttpOnly; Path=/; SameSite=Strict; Secure`,
+      `nickName=${fakeCookieForInit.nickName}; HttpOnly; Path=/; SameSite=Strict; Secure`,
+      `userName=${fakeCookieForInit.userName}; HttpOnly; Path=/; SameSite=Strict; Secure`,
     ]);
     res.writeHead(200);
     res.end();

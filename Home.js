@@ -3,8 +3,7 @@ import DialogP from './DialogP.js';
 
 customElements.define('dialog-p', defineCustomElement(DialogP));
 
-const HOST =
-  window.env === 'dev' ? 'wss://localhost:2222' : 'wss://hueyond.run';
+const HOST = window.env === 'dev' ? 'wss://localhost' : 'wss://hueyond.run';
 
 const pars = window.sessionStorage.getItem('paragraphs');
 if (pars === null) {
@@ -24,10 +23,6 @@ export default {
     function login() {
       if (ws.value === null) {
         ws.value = new WebSocket(`${HOST}/chat`);
-
-        ws.value.onclose = () => {
-          ws.value = null;
-        };
 
         ws.value.onmessage = (event) => {
           const { nickName, userName, text, createdAt } = JSON.parse(
@@ -58,7 +53,7 @@ export default {
     });
 
     watch(
-      () => paragraphs.value?.length,
+      () => paragraphs.value.length,
       async () => {
         if (dialogRef.value) {
           await nextTick();
@@ -83,8 +78,7 @@ export default {
 
     async function logout() {
       if (ws.value !== null) {
-        ws.value.close();
-        ws.value = null;
+        ws.value.close(1000, 'logout');
 
         await fetch('/api/logout');
         window.location.reload();

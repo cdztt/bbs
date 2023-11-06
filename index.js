@@ -25,13 +25,14 @@ wss.on('connection', (ws, req) => {
   }
 
   ws.on('message', (msg) => {
-    // 发送给所有人，群聊
     [...wss.clients].forEach((ws) => ws.send(msg.toString()));
   });
 
-  ws.on('close', () => {
-    deregister(userName);
+  ws.on('close', (code, reason) => {
+    if (code === 1000 && reason.toString() === 'logout') {
+      deregister(userName);
+    }
   });
 });
 
-server.listen(env.NODE_ENV === 'dev' ? 2222 : 443);
+server.listen(443);
