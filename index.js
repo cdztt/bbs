@@ -16,14 +16,7 @@ const wss = new WebSocketServer({
 });
 
 /* after a websocket connected */
-wss.on('connection', (ws, req) => {
-  const userName = parseCookie(req.headers.cookie).userName;
-
-  if (userName === '') {
-    ws.close();
-    return;
-  }
-
+wss.on('connection', (ws) => {
   ws.on('message', (msg) => {
     [...wss.clients].forEach((ws) => ws.send(msg.toString()));
   });
