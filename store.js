@@ -1,7 +1,7 @@
 const { getUuid } = require('./utils.js');
 
-/* 用户名的堆栈 */
-const MAX_NUMBER = 5;
+/* 用户名的栈 */
+const MAX_NUMBER = 20;
 const userNamesPool = Array(MAX_NUMBER)
   .fill()
   .map((v, k) => `${getUuid(3)}_${String(MAX_NUMBER - k).padStart(2, '0')}`);

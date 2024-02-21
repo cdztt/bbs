@@ -34,3 +34,13 @@
   - *不能*通过 window 全局对象传数据
     - 一个 host 下的不同页*不共享* window 全局对象
 - onBeforeUnmount 似乎用不起来
+
+## 文件结构
+
+- index.js —— 程序入口
+- route.js —— 服务端路由
+- utils.js —— 一些工具函数
+- store.js —— 用户数据，登录登出逻辑
+- home.html —— 首页
+- login.html —— 登录页
+- Home.js、Login.js、DialogP.js —— 用 vue 写的 ui 组件
