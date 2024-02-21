@@ -44,3 +44,9 @@
 - home.html —— 首页
 - login.html —— 登录页
 - Home.js、Login.js、DialogP.js —— 用 vue 写的 ui 组件
+
+---
+
+> npm run dev —— 开发
+>
+> npm run start —— 部署
