@@ -16,12 +16,13 @@ const wss = new WebSocketServer({
 });
 
 /* after a websocket connected */
-wss.on('connection', (ws) => {
+wss.on('connection', (ws, req) => {
   ws.on('message', (msg) => {
     [...wss.clients].forEach((ws) => ws.send(msg.toString()));
   });
 
   ws.on('close', (code, reason) => {
+    const { userName } = parseCookie(req.headers.cookie);
     if (code === 1000 && reason.toString() === 'logout') {
       deregister(userName);
     }
