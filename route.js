@@ -77,8 +77,8 @@ function onRequest(req, res) {
       }
 
       res.setHeader('Set-Cookie', [
-        `nickName=${nickName}; HttpOnly; Path=/; SameSite=Strict; Secure`,
-        `userName=${userName}; HttpOnly; Path=/; SameSite=Strict; Secure`,
+        `nickName=${nickName}; HttpOnly; Path=/; SameSite=Strict`,
+        `userName=${userName}; HttpOnly; Path=/; SameSite=Strict`,
       ]);
       res.writeHead(200, {
         'Content-Type': 'text/plain; charset=utf-8',
@@ -94,8 +94,8 @@ function onRequest(req, res) {
   } else if (['/api/logout'].includes(url)) {
     // 主页的"退出"按钮调用此
     res.setHeader('Set-Cookie', [
-      `nickName=${fakeCookieForInit.nickName}; HttpOnly; Path=/; SameSite=Strict; Secure`,
-      `userName=${fakeCookieForInit.userName}; HttpOnly; Path=/; SameSite=Strict; Secure`,
+      `nickName=${fakeCookieForInit.nickName}; HttpOnly; Path=/; SameSite=Strict`,
+      `userName=${fakeCookieForInit.userName}; HttpOnly; Path=/; SameSite=Strict`,
     ]);
     res.writeHead(200);
     res.end();
