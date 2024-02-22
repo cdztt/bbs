@@ -30,5 +30,8 @@ wss.on('connection', (ws, req) => {
   });
 });
 
-// server.listen(443);
-server.listen(80);
+// const PORT= 443
+const PORT = 80;
+server.listen(PORT, () => {
+  console.log(`Listening on port ${PORT}`);
+});
