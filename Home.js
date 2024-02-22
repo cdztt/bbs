@@ -79,8 +79,7 @@ export default {
 
     async function logout() {
       if (ws.value !== null) {
-        ws.value.close(1000, 'logout');
-
+        ws.value.close();
         await fetch('/api/logout');
         window.location.reload();
       }

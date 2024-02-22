@@ -24,11 +24,9 @@ wss.on('connection', (ws, req) => {
     [...wss.clients].forEach((ws) => ws.send(msg.toString()));
   });
 
-  ws.on('close', (code, reason) => {
+  ws.on('close', () => {
     const { userName } = parseCookie(req.headers.cookie);
-    if (code === 1000 && reason.toString() === 'logout') {
-      deregister(userName);
-    }
+    deregister(userName);
   });
 });
 

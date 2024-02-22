@@ -33,7 +33,7 @@
     - 先把一个页的数据给服务端，服务端保存并且发 cookie，另一个页通过 cookie 要数据，数据插值进 html
   - *不能*通过 window 全局对象传数据
     - 一个 host 下的不同页*不共享* window 全局对象
-- onBeforeUnmount 似乎用不起来
+- onBeforeUnmount 似乎用不起来 [reason](https://vuejs.org/api/composition-api-lifecycle.html#onbeforeunmount)
 
 ## 文件结构
 
