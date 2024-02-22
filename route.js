@@ -34,10 +34,14 @@ function render(url, res, payload) {
 function onRequest(req, res) {
   let {
     url,
-    headers: { cookie },
+    headers: { cookie, host },
   } = req;
   const fakeCookieForInit = { nickName: 'visitor', userName: '' };
   cookie = cookie !== undefined ? parseCookie(cookie) : fakeCookieForInit;
+
+  if (!['localhost', 'hueyond.run'].includes(host)) {
+    return;
+  }
 
   if (/.js$/.test(url)) {
     // 浏览器自动请求js文件的时候
