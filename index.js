@@ -1,12 +1,15 @@
-const https = require('node:https');
+// const https = require('node:https');
+const http = require('node:http');
 const { env } = require('node:process');
 const { WebSocketServer } = require('ws');
 const { onRequest } = require('./route.js');
-const { getTls, parseCookie } = require('./utils.js');
+const { /* getTls, */ parseCookie } = require('./utils.js');
 const { deregister } = require('./store.js');
 
 /* https server */
-const server = https.createServer(getTls(env.NODE_ENV), onRequest);
+// const server = https.createServer(getTls(env.NODE_ENV), onRequest);
+/* http server */
+const server = http.createServer(onRequest);
 
 /* websocket server */
 const wss = new WebSocketServer({
@@ -29,4 +32,5 @@ wss.on('connection', (ws, req) => {
   });
 });
 
-server.listen(443);
+// server.listen(443);
+server.listen(80);

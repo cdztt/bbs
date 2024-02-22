@@ -3,7 +3,8 @@ import DialogP from './DialogP.js';
 
 customElements.define('dialog-p', defineCustomElement(DialogP));
 
-const HOST = window.env === 'dev' ? 'wss://localhost' : 'wss://hueyond.run';
+// const HOST = window.env === 'dev' ? 'wss://localhost' : 'wss://hueyond.run';
+const HOST = window.env === 'dev' ? 'ws://localhost' : 'ws://hueyond.run';
 
 const pars = window.sessionStorage.getItem('paragraphs');
 if (pars === null) {
