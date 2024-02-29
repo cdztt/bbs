@@ -1,21 +1,26 @@
 const { getUuid } = require('./utils.js');
 
-/* 用户名的栈 */
-const MAX_NUMBER = 20;
-const userNamesPool = Array(MAX_NUMBER)
-  .fill()
-  .map((v, k) => `${getUuid(3)}_${String(MAX_NUMBER - k).padStart(2, '0')}`);
+class UserNames {
+  constructor() {
+    this.MAX_NUMBER = 20;
+    this.userNamesPool = Array(this.MAX_NUMBER)
+      .fill()
+      .map(
+        (v, k) =>
+          `${getUuid(3)}_${String(this.MAX_NUMBER - k).padStart(2, '0')}`
+      );
+  }
 
-function register() {
-  const userName = userNamesPool.pop() ?? '';
-  return userName;
+  register() {
+    const userName = this.userNamesPool.pop() ?? '';
+    return userName;
+  }
+
+  deregister(userName) {
+    this.userNamesPool.push(userName);
+  }
 }
 
-function deregister(userName) {
-  userNamesPool.push(userName);
-}
+const userNames = new UserNames();
 
-module.exports = {
-  register,
-  deregister,
-};
+module.exports.userNames = userNames;

@@ -2,7 +2,7 @@ const { env } = require('node:process');
 const path = require('node:path');
 const { readFileSync } = require('node:fs');
 const { parseCookie } = require('./utils.js');
-const { register } = require('./store.js');
+const { userNames } = require('./store.js');
 
 /* 渲染html */
 function render(url, res, payload) {
@@ -69,7 +69,7 @@ function onRequest(req, res) {
     });
 
     req.on('end', () => {
-      const userName = register();
+      const userName = userNames.register();
 
       if (userName === '') {
         nickName = 'visitor';
