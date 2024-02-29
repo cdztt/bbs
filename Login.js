@@ -1,4 +1,7 @@
-import { ref } from 'vue';
+import { defineCustomElement, ref } from 'vue';
+import BeiAn from './BeiAn.js';
+
+customElements.define('bei-an', defineCustomElement(BeiAn));
 
 export default {
   setup() {
@@ -32,5 +35,7 @@ export default {
     />
     <button @click='login'>确定</button>
   </div>
+
+  <bei-an/>
   `,
 };

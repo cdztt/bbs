@@ -1,7 +1,9 @@
 import { defineCustomElement, nextTick, onMounted, ref, watch } from 'vue';
+import BeiAn from './BeiAn.js';
 import DialogP from './DialogP.js';
 
 customElements.define('dialog-p', defineCustomElement(DialogP));
+customElements.define('bei-an', defineCustomElement(BeiAn));
 
 // const HOST = window.env === 'dev' ? 'wss://localhost' : 'wss://hueyond.run';
 const HOST = window.env === 'dev' ? 'ws://localhost' : 'ws://hueyond.run';
@@ -132,5 +134,7 @@ export default {
       ></textarea>
       <button @click='send'>发送</button>
     </div>
+
+    <bei-an/>
   `,
 };

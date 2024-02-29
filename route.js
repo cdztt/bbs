@@ -39,11 +39,7 @@ function onRequest(req, res) {
   const fakeCookieForInit = { nickName: 'visitor', userName: '' };
   cookie = cookie !== undefined ? parseCookie(cookie) : fakeCookieForInit;
 
-  if (!['localhost', 'hueyond.run'].includes(host)) {
-    return;
-  }
-
-  if (/.js$/.test(url)) {
+  if (['localhost', 'hueyond.run'].includes(host) && /.js$/.test(url)) {
     // 浏览器自动请求js文件的时候
     const js = readFileSync(path.join(__dirname, url));
     res.writeHead(200, { 'Content-Type': 'text/javascript; charset=utf-8' });

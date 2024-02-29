@@ -47,6 +47,4 @@
 
 ---
 
-> npm run dev —— 开发
->
-> npm run start —— 部署
+> [http://hueyond.run](http://hueyond.run)
