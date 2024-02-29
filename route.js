@@ -24,6 +24,7 @@ function render(url, res, payload) {
     html = html.replace('</body>', `${injectedScript}</body>`);
   }
 
+  res.setHeader('Access-Control-Allow-Origin', '*');
   res.writeHead(200, {
     'Content-Type': 'text/html; charset=utf-8',
   });
