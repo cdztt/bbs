@@ -3,7 +3,7 @@ const http = require('node:http');
 // const { env } = require('node:process');
 const { WebSocketServer } = require('ws');
 const { onRequest } = require('./route.js');
-const { /* getTls, */ parseCookie } = require('./utils.js');
+// const { getTls } = require('./utils.js');
 const { userNames } = require('./store.js');
 
 /* https server */
@@ -21,12 +21,16 @@ const wss = new WebSocketServer({
 /* after a websocket connected */
 wss.on('connection', (ws, req) => {
   ws.on('message', (msg) => {
-    [...wss.clients].forEach((ws) => ws.send(msg.toString()));
-  });
-
-  ws.on('close', () => {
-    const { userName } = parseCookie(req.headers.cookie);
-    userNames.deregister(userName);
+    const { type, ...content } = JSON.parse(msg.toString());
+    if (type === 'dialog') {
+      [...wss.clients].forEach((ws) => ws.send(JSON.stringify(content)));
+    } else if (type === 'state') {
+      const onlineUsers = userNames.getOnlineUsersUsingNickName();
+      const state = {
+        onlineUsers,
+      };
+      [...wss.clients].forEach((ws) => ws.send(JSON.stringify(state)));
+    }
   });
 });
 

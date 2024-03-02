@@ -27,11 +27,17 @@
     home.config.globalProperties.window = window
     home.mount('#home')
   </script>
+
+  <script>
+    window.addEventListener('beforeunload', () => {
+      fetch('/api/offline')
+    })
+  </script>
 </body>
 
 <style>
   #home {
-    width: 40vw;
+    width: 50vw;
     margin: 0 auto;
   }
 
@@ -49,6 +55,23 @@
   .headline>div:nth-child(2) {
     display: flex;
     justify-content: space-between;
+  }
+
+  .main {
+    display: flex;
+  }
+
+  .online-list {
+    flex: 1;
+  }
+
+  .online-list.dialog {
+    margin-left: 10px;
+    text-wrap: nowrap;
+  }
+
+  .chat {
+    flex: 4;
   }
 
   .dialog {

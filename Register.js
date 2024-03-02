@@ -7,8 +7,8 @@ export default {
   setup() {
     const nickName = ref('');
 
-    async function login() {
-      const res = await fetch('/api/login', {
+    async function register() {
+      const res = await fetch('/api/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'text/plain; charset=utf-8',
@@ -16,13 +16,13 @@ export default {
         body: nickName.value,
       }).then((res) => res.text());
 
-      window.alert(res);
+      // window.alert(res);
       window.location.replace('/');
     }
 
     return {
       nickName,
-      login,
+      register,
     };
   },
 
@@ -30,10 +30,10 @@ export default {
   <div>
     <input
       v-model.trim='nickName'
-      placeholder='请输入昵称,不超过12个字符'
-      maxlength=12
+      placeholder='请输入昵称, 不超过10个字符'
+      maxlength=10
     />
-    <button @click='login'>确定</button>
+    <button @click='register'>确定</button>
   </div>
 
   <bei-an/>

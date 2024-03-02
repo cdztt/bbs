@@ -7,7 +7,7 @@
 ## 应用的功能
 
 - 群聊
-- 昵称
+- 当前在线用户列表
 
 ## 学到的东西
 
@@ -42,8 +42,8 @@
 - utils.js —— 一些工具函数
 - store.js —— 用户数据，登录登出逻辑
 - home.html —— 首页
-- login.html —— 登录页
-- Home.js、Login.js、DialogP.js —— 用 vue 写的 ui 组件
+- register.html —— 登录页
+- Home.js、Register.js、DialogP.js —— 用 vue 写的 ui 组件
 
 ---
 

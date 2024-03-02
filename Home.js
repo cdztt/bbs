@@ -5,53 +5,72 @@ import DialogP from './DialogP.js';
 customElements.define('dialog-p', defineCustomElement(DialogP));
 customElements.define('bei-an', defineCustomElement(BeiAn));
 
-// const HOST = window.env === 'dev' ? 'wss://localhost' : 'wss://hueyond.run';
-const HOST = window.env === 'dev' ? 'ws://localhost' : 'ws://hueyond.run';
-
-const pars = window.sessionStorage.getItem('paragraphs');
-if (pars === null) {
-  window.sessionStorage.setItem('paragraphs', JSON.stringify([]));
+function getParagraphs() {
+  let p = window.sessionStorage.getItem('paragraphs');
+  if (p === null) {
+    window.sessionStorage.setItem('paragraphs', JSON.stringify([]));
+    p = window.sessionStorage.getItem('paragraphs');
+  }
+  return JSON.parse(p);
 }
 
 export default {
   setup() {
     const text = ref('');
     const ws = ref(null);
-    const paragraphs = ref([]);
+    const paragraphs = ref(getParagraphs());
     const dialogRef = ref(null);
+    const onlineUsers = ref([]);
 
-    const myName = window.nickName !== 'visitor' ? window.nickName : '未登录';
     const hasLogin = window.userName !== '';
+    const myName = hasLogin ? window.nickName : '未登录';
 
-    function login() {
+    function connectWs() {
       if (ws.value === null) {
+        // const HOST =
+        //   window.env === 'dev' ? 'wss://localhost' : 'wss://hueyond.run';
+        const HOST =
+          window.env === 'dev' ? 'ws://localhost' : 'ws://hueyond.run';
         ws.value = new WebSocket(`${HOST}/chat`);
 
-        ws.value.onmessage = (event) => {
-          const { nickName, userName, text, createdAt } = JSON.parse(
-            event.data
-          );
+        ws.value.onopen = () => {
+          const msg = {
+            type: 'state',
+          };
+          ws.value.send(JSON.stringify(msg));
+        };
 
-          paragraphs.value.push({
-            fromWho: userName === window.userName ? 'me' : nickName,
+        ws.value.onmessage = (event) => {
+          const {
+            onlineUsers: users,
+            nickName,
+            userName,
             text,
             createdAt,
-          });
+          } = JSON.parse(event.data);
 
-          window.sessionStorage.setItem(
-            'paragraphs',
-            JSON.stringify(paragraphs.value)
-          );
+          if (users) {
+            // state
+            onlineUsers.value = users;
+          } else {
+            // dialog
+            paragraphs.value.push({
+              fromWho: userName === window.userName ? '我' : nickName,
+              text,
+              createdAt,
+            });
+            window.sessionStorage.setItem(
+              'paragraphs',
+              JSON.stringify(paragraphs.value)
+            );
+          }
         };
       }
     }
 
     onMounted(() => {
-      if (pars !== null) {
-        paragraphs.value = JSON.parse(pars);
-      }
-      if (window.userName !== '') {
-        login();
+      if (hasLogin) {
+        connectWs();
       }
     });
 
@@ -68,12 +87,12 @@ export default {
     function send() {
       if (ws.value !== null) {
         const msg = {
+          type: 'dialog',
           nickName: window.nickName,
           userName: window.userName,
           text: text.value,
           createdAt: Date.now(),
         };
-
         ws.value.send(JSON.stringify(msg));
         text.value = '';
       }
@@ -81,8 +100,11 @@ export default {
 
     async function logout() {
       if (ws.value !== null) {
-        ws.value.close();
         await fetch('/api/logout');
+        const msg = {
+          type: 'state',
+        };
+        ws.value.send(JSON.stringify(msg));
         window.location.reload();
       }
     }
@@ -95,6 +117,7 @@ export default {
       send,
       logout,
       dialogRef,
+      onlineUsers,
     };
   },
 
@@ -105,7 +128,7 @@ export default {
         <span>你的名字: {{myName}}</span>
         <div>
           <button :disabled='hasLogin'
-            @click='window.location.assign("/login")'
+            @click='window.location.assign("/register")'
           >
             登录
           </button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -118,22 +141,36 @@ export default {
       </div>
     </div>
 
-    <div class='dialog'
-      ref='dialogRef'
-    >
-      <dialog-p v-for='par of paragraphs'
-        :key='par.createdAt'
-        :msg='par' />
+    <div class='main'>
+      <div class='chat'>
+        <div class='dialog'
+        ref='dialogRef'
+        >
+          <dialog-p v-for='p of paragraphs'
+          :key='p.createdAt'
+          :msg='p' />
+        </div>
+
+        <div class='composition'>
+          <textarea type='text'
+            v-model='text'
+            placeholder='按 Ctrl + Enter 发送'
+            @keyup.ctrl.enter.exact='send'
+          ></textarea>
+          <button @click='send'>发送</button>
+        </div>
+      </div>
+
+      <div class='online-list dialog'>
+        <div>
+          当前在线用户:
+        </div>
+        <li v-for='name of onlineUsers'>
+          {{name === window.nickName ? '(我)' : ''}}{{name}}
+        </li>
+      </div>
     </div>
 
-    <div class='composition'>
-      <textarea type='text'
-        v-model='text'
-        placeholder='按 Ctrl + Enter 发送'
-        @keyup.ctrl.enter.exact='send'
-      ></textarea>
-      <button @click='send'>发送</button>
-    </div>
 
     <bei-an/>
   `,
