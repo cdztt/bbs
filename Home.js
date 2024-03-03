@@ -86,6 +86,7 @@ export default {
 
     function send() {
       if (ws.value !== null) {
+        console.log('sending', ws.value);
         const msg = {
           type: 'dialog',
           nickName: window.nickName,

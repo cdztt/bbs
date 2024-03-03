@@ -16,7 +16,7 @@ export default {
         body: nickName.value,
       }).then((res) => res.text());
 
-      // window.alert(res);
+      window.alert(res);
       window.location.replace('/');
     }
 

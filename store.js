@@ -2,6 +2,7 @@ const { getUuid } = require('./utils.js');
 
 class UserNames {
   constructor() {
+    // 最大人数
     this.MAX_NUMBER = 20;
     this.userNamesPool = Array(this.MAX_NUMBER)
       .fill()

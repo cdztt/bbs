@@ -14,6 +14,7 @@
 > 涉及 WebSocket 本身的代码是很简单的，就是服务客户两端相互监听 message
 
 - 客户端发起升级，服务端接受升级，建立 WebSocket；客户端和服务端都可以主动关闭 WebSocket
+- 通过 WebSocket 把服务端的变更推送给客户端
 
 > 没有用 express 框架，手写服务端路由，进一步了解了 node 的 http、net 这些模块
 
@@ -33,7 +34,11 @@
     - 先把一个页的数据给服务端，服务端保存并且发 cookie，另一个页通过 cookie 要数据，数据插值进 html
   - *不能*通过 window 全局对象传数据
     - 一个 host 下的不同页*不共享* window 全局对象
-- onBeforeUnmount 似乎用不起来 [reason](https://vuejs.org/api/composition-api-lifecycle.html#onbeforeunmount)
+- onBeforeUnmount 似乎用不起来 [reason](https://vuejs.org/api/composition-api-lifecycle.html#onbeforeunmount)，用 beforeunload
+
+> 了解多页应用 mpa 的一般模式
+
+- 服务端设置 cookie，加载目标页面，根据 cookie 通过 window 变量把数据插值进 html 字符串，实现客户端页面更新
 
 ## 文件结构
 
