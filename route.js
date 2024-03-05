@@ -1,12 +1,14 @@
 const { env } = require('node:process');
 const path = require('node:path');
-const { readFileSync } = require('node:fs');
+const { readFile } = require('node:fs/promises');
 const { parseCookie, parseBodyToStr } = require('./utils.js');
 const { userNames } = require('./store.js');
 
 /* 渲染html */
-function render(url, res, payload) {
-  let html = readFileSync(path.join(__dirname, url + '.html')).toString();
+async function render(url, res, payload) {
+  let html = await readFile(path.join(__dirname, url + '.html'), {
+    encoding: 'utf8',
+  });
 
   if (env.NODE_ENV === 'prod') {
     html = html.replace('vue.esm-browser.js', 'vue.esm-browser.prod.js');
@@ -17,6 +19,7 @@ function render(url, res, payload) {
     const injectedScript = `
 <script>
   window.env='${payload['window.env']}'
+  window.protocol='${payload['window.protocol']}'
   window.userName='${payload['window.userName']}'
   window.nickName='${payload['window.nickName']}'
 </script>
@@ -31,7 +34,7 @@ function render(url, res, payload) {
 }
 
 /* 路由 */
-function onRequest(req, res) {
+async function onRequest(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
 
   let {
@@ -42,13 +45,14 @@ function onRequest(req, res) {
 
   if (['localhost', 'hueyond.run'].includes(host) && /.js$/.test(url)) {
     // 浏览器自动请求js文件的时候
-    const js = readFileSync(path.join(__dirname, url));
+    const js = await readFile(path.join(__dirname, url), { encoding: 'utf8' });
     res.writeHead(200, { 'Content-Type': 'text/javascript; charset=utf-8' });
     res.end(js);
   } else if (['/'].includes(url)) {
     const { userName, nickName } = userNames.register(initUserName);
     const payload = {
       ['window.env']: env.NODE_ENV,
+      ['window.protocol']: env.NODE_PROTOCOL,
       ['window.userName']: userName,
       ['window.nickName']: nickName,
     };
@@ -64,7 +68,10 @@ function onRequest(req, res) {
   } else if (['/api/register'].includes(url)) {
     // 登录页的"确定"按钮调用此
     parseBodyToStr(req).then((input) => {
-      const { userName, nickName } = userNames.register(initUserName, input);
+      const { ok, errMsg, userName, nickName } = userNames.register(
+        initUserName,
+        input
+      );
       res.setHeader('Set-Cookie', [
         `userName=${userName}; HttpOnly; Path=/; SameSite=Strict`,
       ]);
@@ -72,11 +79,11 @@ function onRequest(req, res) {
         'Content-Type': 'text/plain; charset=utf-8',
       });
       res.end(
-        userName !== ''
+        ok
           ? `登录成功, 你的名字: ${nickName}${
               nickName === userName ? ' (自动生成) ' : ''
             }`
-          : '失败 (人数已满)'
+          : `失败 (${errMsg})`
       );
     });
   } else if (['/api/offline'].includes(url)) {
@@ -87,7 +94,6 @@ function onRequest(req, res) {
     // 主页的"退出"按钮调用此
     userNames.removeOnlineUser(initUserName);
     userNames.returnUserName(initUserName);
-
     const userName = '';
     res.setHeader('Set-Cookie', [
       `userName=${userName}; HttpOnly; Path=/; SameSite=Strict`,

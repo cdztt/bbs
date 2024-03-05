@@ -25,13 +25,13 @@ export default {
     const hasLogin = window.userName !== '';
     const myName = hasLogin ? window.nickName : '未登录';
 
+    const protocol = window.protocol === 'http' ? 'ws' : 'wss';
+    const host = window.env === 'dev' ? 'localhost' : 'hueyond.run';
+    const url = `${protocol}://${host}`;
+
     function connectWs() {
       if (ws.value === null) {
-        // const HOST =
-        //   window.env === 'dev' ? 'wss://localhost' : 'wss://hueyond.run';
-        const HOST =
-          window.env === 'dev' ? 'ws://localhost' : 'ws://hueyond.run';
-        ws.value = new WebSocket(`${HOST}/chat`);
+        ws.value = new WebSocket(`${url}/chat`);
 
         ws.value.onopen = () => {
           const msg = {
@@ -59,6 +59,7 @@ export default {
               text,
               createdAt,
             });
+
             window.sessionStorage.setItem(
               'paragraphs',
               JSON.stringify(paragraphs.value)
@@ -86,7 +87,6 @@ export default {
 
     function send() {
       if (ws.value !== null) {
-        console.log('sending', ws.value);
         const msg = {
           type: 'dialog',
           nickName: window.nickName,
