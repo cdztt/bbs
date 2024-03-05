@@ -1,9 +1,9 @@
 {
   "scripts": {
-    "devhttp": "cross-env NODE_ENV=dev NODE_PROTOCOL=http nodemon -w ../WS -e js,html ./index.js http",
-    "devhttps": "cross-env NODE_ENV=dev NODE_PROTOCOL=https nodemon -w ../WS -e js,html ./index.js https",
-    "starthttp": "cross-env NODE_ENV=prod nodemon --openssl-legacy-provider ./index.js http",
-    "starthttps": "cross-env NODE_ENV=prod nodemon --openssl-legacy-provider ./index.js https"
+    "devhttp": "cross-env NODE_ENV=dev NODE_PROTOCOL=http nodemon -w ../WS -e js,html ./index.js",
+    "devhttps": "cross-env NODE_ENV=dev NODE_PROTOCOL=https nodemon -w ../WS -e js,html ./index.js",
+    "starthttp": "cross-env NODE_ENV=prod NODE_PROTOCOL=http nodemon --openssl-legacy-provider ./index.js",
+    "starthttps": "cross-env NODE_ENV=prod NODE_PROTOCOL=https nodemon --openssl-legacy-provider ./index.js"
   },
   "dependencies": {
     "ws": "^8.14.2"
