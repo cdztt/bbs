@@ -52,4 +52,4 @@
 
 ---
 
-> [http://hueyond.run](http://hueyond.run)
+> [http://hueyond.run/chat](http://hueyond.run/chat)
